@@ -6,7 +6,8 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table
 import astropy.units as u
 import pickle
-
+__current_dir__=os.path.abspath(os.getcwd())
+__data_dir__=os.path.join("..","..",__current_dir__,"galaxy_data")
 
 class galaxy_survey(object):
 	def __init__(self,source,physpar,mass,photom):
@@ -23,7 +24,7 @@ class galaxy_catalog(object):
 			surveys = [surveys]
 		for survey in surveys:
 			if survey == 'goodss':
-				with open(survey+'.pkl','rb') as fp:
+				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.goodss = pickle.load(fp)
 			elif survey == 'egs':
 				with open(survey+'.pkl','rb') as fp:
