@@ -6,8 +6,10 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table
 import astropy.units as u
 import pickle
+import os
+
 __current_dir__=os.path.abspath(os.getcwd())
-__data_dir__=os.path.join("..","..",__current_dir__,"galaxy_data")
+__data_dir__=os.path.join(__current_dir__,"..","..","galaxy_data")
 
 class galaxy_survey(object):
 	def __init__(self,source,physpar,mass,photom):
@@ -22,22 +24,50 @@ class galaxy_catalog(object):
 	def __init__(self,surveys):
 		if not isinstance(surveys,(list,tuple)):
 			surveys = [surveys]
+		self.survey_dict=dict([])
+		self.redshift_names=dict([])
 		for survey in surveys:
 			if survey == 'goodss':
 				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.goodss = pickle.load(fp)
+					self.survey_dict[survey]=self.goodss
+					self.redshift_names[survey]='zbest'
 			elif survey == 'egs':
-				with open(survey+'.pkl','rb') as fp:
+				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.egs = pickle.load(fp)
+					self.survey_dict[survey]=self.egs
+					self.redshift_names[survey]='zbest'
 			elif survey == 'cos':
-				with open(survey+'.pkl','rb') as fp:
+				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.cos = pickle.load(fp)
+					self.survey_dict[survey]=self.cos
+					self.redshift_names[survey]='zbest'
 			elif survey == 'uds':
-				with open(survey+'.pkl','rb') as fp:
+				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.uds = pickle.load(fp)
+					self.survey_dict[survey]=self.uds
+					self.redshift_names[survey]='zbest'
 			elif survey == 'goodsn':
-				with open(survey+'.pkl','rb') as fp:
+				with open(os.path.join(__data_dir__,survey+'.pkl'),'rb') as fp:
 					self.goodsn = pickle.load(fp)
+					self.survey_dict[survey]=self.goodsn
+					self.redshift_names[survey]='z'
+
+		
+	def redshift_distribution(self,surveys,minz=0,maxz=3):
+		if not isinstance(surveys,(list,tuple)):
+			surveys = [surveys]
+		for survey in surveys:
+			print('hello')
+			print(len(self.survey_dict[survey].mass))
+			#for i in range(len(self.survey_dict[survey].mass)):
+			for i in range(10):
+				if np.float(self.survey_dict[survey].mass[i][self.redshift_names[survey]]) > minz and np.float(self.survey_dict[survey].mass[i][self.redshift_names[survey]]) < maxz:
+					print(self.survey_dict[survey].mass[i][self.redshift_names[survey]])
+					print(self.survey_dict[survey].mass[i])
+
+			#print(self.survey_dict[survey].mass[0][self.redshift_names[survey]])
+			#print(self.redshift_names[survey])
 
 
 
@@ -128,10 +158,14 @@ def output_survey(survey):
 
 #survey = 'uds'
 #output_survey(survey)
-uds_catalog = galaxy_catalog('uds')
+catalog = galaxy_catalog('goodsn')
 #egs_catalog = galaxy_catalog('egs')
 #goodss_catalog = galaxy_catalog('goodss')
 #goodsn_catalog = galaxy_catalog('goodsn')
 
-galaxy_catalogs = galaxy_catalog(['uds','egs','goodss','goodsn'])
-print(galaxy_catalogs.uds.mass)
+#galaxy_catalogs = galaxy_catalog(['uds','egs','goodss','goodsn'])
+print(catalog.goodsn.mass[0])
+#catalog.redshift_distribution(['goodss','egs'])
+print(catalog.redshift_names)
+print(catalog.survey_dict)
+catalog.redshift_distribution('goodsn')
