@@ -3,7 +3,7 @@ import csv
 from astropy.io import ascii
 from astropy import cosmology as cosmo
 from astropy.coordinates import SkyCoord  
-from astropy.table import Table
+from astropy.table import Table,vstack
 import astropy.units as u
 import pickle
 import os
@@ -61,10 +61,21 @@ class galaxy_catalog(object):
 			print('hello')
 			print(len(self.survey_dict[survey].mass))
 			#for i in range(len(self.survey_dict[survey].mass)):
-			for i in range(10):
+			masses_in_z = []
+			photoms_in_z = []
+			physpars_in_z = []
+			for i in range(len(self.survey_dict[survey].mass)):
 				if np.float(self.survey_dict[survey].mass[i][self.redshift_names[survey]]) > minz and np.float(self.survey_dict[survey].mass[i][self.redshift_names[survey]]) < maxz:
-					print(self.survey_dict[survey].mass[i][self.redshift_names[survey]])
-					print(self.survey_dict[survey].mass[i])
+					masses_in_z.append(self.survey_dict[survey].mass[i])
+					photoms_in_z.append(self.survey_dict[survey].photom[i])
+					physpars_in_z.append(self.survey_dict[survey].physpar[i])
+			a = vstack([i for i in physpars_in_z])
+			b = vstack([i for i in masses_in_z])
+			c = vstack([i for i in photoms_in_z])
+			source = self.survey_dict[survey].source
+			in_z_survey = galaxy_survey(source,a,b,c)
+			return in_z_survey			
+			
 
 			#print(self.survey_dict[survey].mass[0][self.redshift_names[survey]])
 			#print(self.redshift_names[survey])
@@ -168,4 +179,5 @@ print(catalog.goodsn.mass[0])
 #catalog.redshift_distribution(['goodss','egs'])
 print(catalog.redshift_names)
 print(catalog.survey_dict)
-catalog.redshift_distribution('goodsn')
+z_window = catalog.redshift_distribution('goodsn',0.5,0.6)
+print(z_window.mass)
