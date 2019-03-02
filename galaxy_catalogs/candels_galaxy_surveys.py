@@ -7,6 +7,8 @@ from astropy.table import Table,vstack
 import astropy.units as u
 import pickle
 import os
+import matplotlib.pyplot as plt 
+
 
 __current_dir__=os.path.abspath(os.getcwd())
 __data_dir__=os.path.join(__current_dir__,"..","..","galaxy_data")
@@ -54,7 +56,7 @@ class galaxy_catalog(object):
 					self.redshift_names[survey]='z'
 
 		
-	def redshift_distribution(self,surveys,minz=0,maxz=3):
+	def redshift_distribution(self,surveys,minz=0,maxz=3,plot=False):
 		if not isinstance(surveys,(list,tuple)):
 			surveys = [surveys]
 		for survey in surveys:
@@ -74,7 +76,12 @@ class galaxy_catalog(object):
 			c = vstack([i for i in photoms_in_z])
 			source = self.survey_dict[survey].source
 			in_z_survey = galaxy_survey(source,a,b,c)
-			return in_z_survey			
+			if plot == True:
+				plt.hist([in_z_survey.mass[self.redshift_names[survey]]],n)
+				plt.xlabel('Redshift')
+				plt.show()
+
+			return in_z_survey
 			
 
 			#print(self.survey_dict[survey].mass[0][self.redshift_names[survey]])
@@ -175,9 +182,9 @@ catalog = galaxy_catalog('goodsn')
 #goodsn_catalog = galaxy_catalog('goodsn')
 
 #galaxy_catalogs = galaxy_catalog(['uds','egs','goodss','goodsn'])
-print(catalog.goodsn.mass[0])
+#print(catalog.goodsn.mass[0])
 #catalog.redshift_distribution(['goodss','egs'])
-print(catalog.redshift_names)
-print(catalog.survey_dict)
-z_window = catalog.redshift_distribution('goodsn',0.5,0.6)
-print(z_window.mass)
+#print(catalog.redshift_names)
+#print(catalog.survey_dict)
+z_window = catalog.redshift_distribution('goodsn',0.5,0.6,plot=True)
+#print(z_window.mass)
