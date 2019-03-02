@@ -77,7 +77,7 @@ class galaxy_catalog(object):
 			source = self.survey_dict[survey].source
 			in_z_survey = galaxy_survey(source,a,b,c)
 			if plot == True:
-				plt.hist([in_z_survey.mass[self.redshift_names[survey]]],n)
+				plt.hist([in_z_survey.mass[self.redshift_names[survey]]])
 				plt.xlabel('Redshift')
 				plt.show()
 
