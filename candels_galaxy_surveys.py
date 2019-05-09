@@ -61,7 +61,7 @@ class galaxy_survey(object):
 			self.sfr_2a_tau='  5 SFR_2a_tau        (solMass/yr) '
 			self.tau_2a_tau='  3 tau_2a_tau        (Gyr) '
 		elif source == 'Nayyeri2017; cos_candels; https://archive.stsci.edu/prepds/candels/':
-			self.redshift_names='zbest'
+			self.redshift_names='zbest '
 			self.ra_names='RA (deg) '
 			self.ra_units=u.deg 
 			self.dec_names='DEC (deg) '
@@ -410,5 +410,5 @@ def output_survey(survey):
 		pickle.dump(my_survey,fp)
 
 
-def update_survey(galaxy_survey):
-	return galaxy_survey(galaxy_survey.source,galaxy_survey.physpar,galaxy_survey.mass,galaxy_survey.photom)
+def update_survey(survey):
+	return galaxy_survey(survey.source,survey.physpar,survey.mass,survey.photom)
