@@ -20,8 +20,8 @@ class galaxy_survey(object):
 		self.physpar = physpar
 		self.mass = mass
 		self.photom = photom
-		print(self.source,source)
 		if source == 'Santini2015; goods-s_candels; https://archive.stsci.edu/prepds/candels/':
+			# photom table colnames
 			self.redshift_names='zbest'
 			self.ra_names='RA (F160W coordinate, J2000, degree)'
 			self.ra_units=u.deg 
@@ -37,12 +37,16 @@ class galaxy_survey(object):
 			self.db_ellip='ERRB_IMAGE RMS position error along major axis [pixel]' 
 			self.theta_ellip='THETA_IMAGE Position angle (CCW/x) [deg]' 
 			self.dtheta_ellip='ERRTHETA_IMAGE Error ellipse position angle (CCW/x) [deg]' 
-			# DAFUQ is tau, method 2a tau, other methods? 
+			# DAFUQ is tau, method 2a tau, other methods???
+			# physpar colnames 
 			self.age_2a_tau='age_2a_tau'
 			self.sfr_2a_tau='SFR_2a_tau'
 			self.tau_2a_tau='tau_2a_tau'
+			# mass colnames
+			self.mass_2a_tau='M_2a_tau'
 		elif source == 'Stefanon2017; egs_candels; https://archive.stsci.edu/prepds/candels/':
-			self.redshift_names='zbest'
+			# photom colnames
+			self.redshift_names=' 12 zbest          ' # actually in mass!
 			self.ra_names='  3 RA                            (deg) '
 			self.ra_units=u.deg 
 			self.dec_names='  4 DEC                           (deg) '
@@ -57,10 +61,14 @@ class galaxy_survey(object):
 			self.theta_ellip='465 THETA_IMAGE                   (deg) ' 
 			self.dtheta_ellip='466 ERRTHETA_IMAGE                (deg) ' 
 			self.kron_radius_names = '522 KRON_RADIUS                   (pixel) '
+			# physpar cols
 			self.age_2a_tau='  2 age_2a_tau        (dex(yr)) '
 			self.sfr_2a_tau='  5 SFR_2a_tau        (solMass/yr) '
 			self.tau_2a_tau='  3 tau_2a_tau        (Gyr) '
+			# mass cols
+			self.mass_2a_tau=' 28 M_2a_tau       (dex(solMass)) '
 		elif source == 'Nayyeri2017; cos_candels; https://archive.stsci.edu/prepds/candels/':
+			# photom table columns 
 			self.redshift_names='zbest '
 			self.ra_names='RA (deg) '
 			self.ra_units=u.deg 
@@ -76,10 +84,14 @@ class galaxy_survey(object):
 			self.db_ellip='ERRB_IMAGE (pixel) ' 
 			self.theta_ellip='THETA_IMAGE (deg) ' 
 			self.dtheta_ellip='ERRTHETA_IMAGE (deg) '
+			# physpar table columns 
 			self.age_2a_tau='age_2a_tau (dex(yr)) '
 			self.sfr_2a_tau='SFR_2a_tau (solMass/yr) '
-			self.tau_2a_tau='tau_2a_tau (Gyr) ' 
+			self.tau_2a_tau='tau_2a_tau (Gyr) '
+			# mass table columns
+			self.mass_2a_tau = 'M_2_tau (dex(solMass)) '
 		elif source == 'Santini2015; uds_candels; https://archive.stsci.edu/prepds/candels/':
+			# photom colnames
 			self.redshift_names='zbest'
 			self.ra_names='RA'
 			self.ra_units=u.deg 
@@ -95,10 +107,14 @@ class galaxy_survey(object):
 			self.theta_ellip='theta_image' 
 			self.dtheta_ellip='errtheta_image' 
 			self.kron_radius_names = 'kron_radius'
+			# physpar colnames
 			self.age_2a_tau='age_2a_tau'
 			self.sfr_2a_tau='SFR_2a_tau'
 			self.tau_2a_tau='tau_2a_tau'
+			# mass colnames
+			self.mass_2a_tau='M_2a_tau'
 		elif source == 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php':
+			# photom cols
 			self.redshift_names='z'
 			self.ra_names='ra'
 			self.ra_units=u.deg 
@@ -107,6 +123,7 @@ class galaxy_survey(object):
 			self.kron_radius_names = 'kron_radius'
 			self.a_ellip='a_image'
 			self.b_ellip='b_image'
+			self.theta_ellip='theta_J2000'
 			# the following are columns in the mass table; others have similar cols in physpar table don't know method but isnt necessarily same as 2a tau as all others. 
 			self.lage='lage'
 			self.ltau='ltau'
@@ -137,8 +154,24 @@ class galaxy_survey(object):
 			y = ddec.value
 			x*=conversion
 			y*=conversion
-			R = (np.float(self.photom[i][self.cxx])*x**2 + np.float(self.photom[i][self.cyy])*y**2 + np.float(self.photom[i][self.cxy])*x*y)**(1/2)
-			Rs.append(R)
+			if self.source != 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php':
+				#dra, ddec = loc.spherical_offsets_to(locs[i])
+				#x = dra.value
+				#y = ddec.value
+				#x*=conversion
+				#y*=conversion
+				R = (np.float(self.photom[i][self.cxx])*x**2 + np.float(self.photom[i][self.cyy])*y**2 + np.float(self.photom[i][self.cxy])*x*y)**(1./2)
+				Rs.append(R)
+			elif self.source == 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php': # need to calculate Cij ellipse parameters not given in table
+				a = np.float(self.photom[i][self.a_ellip])
+				b = np.float(self.photom[i][self.b_ellip])
+				theta = np.float(self.photom[i][self.theta_ellip])*np.pi/180 
+				cxx = (np.cos(theta)/a)**2 + (np.sin(theta)/b)**2
+				cyy = (np.sin(theta)/a)**2 + (np.cos(theta)/b)**2
+				cxy = 2*np.sin(theta)*np.cos(theta)*(1/a**2 - 1/b**2)
+				R = (cxx*x**2 + cyy*y**2 + cxy*x*y)**(1./2)
+				Rs.append(R)
+			else: print('Hold the phone didnt go into either source for cij')
 		nearest = min(enumerate(Rs), key=itemgetter(1))[0] # gets the index of the minimum R
 		return [galaxy_survey(self.source,self.physpar[nearest],self.mass[nearest],self.photom[nearest]),Rs[nearest],Rs]
 
@@ -309,14 +342,15 @@ class galaxy_catalog(object):
 			locs = [i for i in self.gal_skycoords(survey)]
 			for i in range(len(locs)):
 				if loc.separation(locs[i]) < within:
+					print(self.survey_dict[survey].source)
 					near_masses.append(self.survey_dict[survey].mass[i])
 					near_photoms.append(self.survey_dict[survey].photom[i])
 					near_physpars.append(self.survey_dict[survey].physpar[i])
-			a = vstack([i for i in near_physpars])
-			b = vstack([i for i in near_masses])
-			c = vstack([i for i in near_photoms])
-			source = self.survey_dict[survey].source
-			nearby_gals = galaxy_survey(source,a,b,c)
+		a = vstack([i for i in near_physpars])
+		b = vstack([i for i in near_masses])
+		c = vstack([i for i in near_photoms])
+		source = self.survey_dict[survey].source
+		nearby_gals = galaxy_survey(source,a,b,c)
 		
 		return nearby_gals
 
@@ -410,5 +444,3 @@ def output_survey(survey):
 		pickle.dump(my_survey,fp)
 
 
-def update_survey(survey):
-	return galaxy_survey(survey.source,survey.physpar,survey.mass,survey.photom)
