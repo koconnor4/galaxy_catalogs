@@ -21,6 +21,9 @@ class galaxy_survey(object):
 		self.mass = mass
 		self.photom = photom
 		if source == 'Santini2015; goods-s_candels; https://archive.stsci.edu/prepds/candels/':
+
+			self.ids = 'Seq'
+
 			# photom table colnames
 			self.redshift_names='zbest'
 			self.ra_names='RA (F160W coordinate, J2000, degree)'
@@ -32,9 +35,9 @@ class galaxy_survey(object):
 			self.cyy='CYY_IMAGE Cyy object ellipse parameter [pixel**(-2)]' 
 			self.cxy='CXY_IMAGE Cxy object ellipse parameter [pixel**(-2)]'
 			self.a_ellip='A_IMAGE Profile RMS along major axis [pixel]' 
-			self.b_ellip='B_IMAGE Profile RMS along major axis [pixel]'
+			self.b_ellip = 'B_IMAGE Profile RMS along minor axis [pixel]'
 			self.da_ellip='ERRA_IMAGE RMS position error along major axis [pixel]'
-			self.db_ellip='ERRB_IMAGE RMS position error along major axis [pixel]' 
+			self.db_ellip='ERRB_IMAGE RMS position error along minor axis [pixel]' 
 			self.theta_ellip='THETA_IMAGE Position angle (CCW/x) [deg]' 
 			self.dtheta_ellip='ERRTHETA_IMAGE Error ellipse position angle (CCW/x) [deg]' 
 			# DAFUQ is tau, method 2a tau, other methods???
@@ -45,6 +48,9 @@ class galaxy_survey(object):
 			# mass colnames
 			self.mass_2a_tau='M_2a_tau'
 		elif source == 'Stefanon2017; egs_candels; https://archive.stsci.edu/prepds/candels/':
+
+			self.ids = '  1 ID             '
+
 			# photom colnames
 			self.redshift_names=' 12 zbest          ' # actually in mass!
 			self.ra_names='  3 RA                            (deg) '
@@ -68,6 +74,9 @@ class galaxy_survey(object):
 			# mass cols
 			self.mass_2a_tau=' 28 M_2a_tau       (dex(solMass)) '
 		elif source == 'Nayyeri2017; cos_candels; https://archive.stsci.edu/prepds/candels/':
+
+			self.ids = 'ID '
+
 			# photom table columns 
 			self.redshift_names='zbest '
 			self.ra_names='RA (deg) '
@@ -91,6 +100,9 @@ class galaxy_survey(object):
 			# mass table columns
 			self.mass_2a_tau = 'M_2_tau (dex(solMass)) '
 		elif source == 'Santini2015; uds_candels; https://archive.stsci.edu/prepds/candels/':
+			
+			self.ids = 'Seq'
+
 			# photom colnames
 			self.redshift_names='zbest'
 			self.ra_names='RA'
@@ -114,6 +126,9 @@ class galaxy_survey(object):
 			# mass colnames
 			self.mass_2a_tau='M_2a_tau'
 		elif source == 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php':
+			
+			self.ids = 'id'
+
 			# photom cols
 			self.redshift_names='z'
 			self.ra_names='ra'
