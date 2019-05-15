@@ -68,7 +68,7 @@ def download_image_save_cutout(position, size, cutout_filename = 'example_cutout
     #cutout_filename = 'example_cutout.fits'
     hdu.writeto('cutouts/'+cutout_filename, overwrite=True)
 
-def ellipse(file,possible_hosts,sn_position,title='',save = False,show=False):
+def ellipse(file,possible_hosts,sn_position,title='', save = False,show=False):
     
     # access the file
     fits_image = fits.open('cutouts/'+file)
@@ -91,7 +91,7 @@ def ellipse(file,possible_hosts,sn_position,title='',save = False,show=False):
     #ax.imshow(hdu.data,vmin=0,vmax=0.015)
     # try with norm
     #ax.imshow(hdu.data,norm=matplotlib.colors.Normalize(vmin=-.015,vmax=.015))
-    print(np.amin(hdu.data ))
+    #print(np.amin(hdu.data ))
     norms = [matplotlib.colors.LogNorm(vmin=np.abs(np.amin(hdu.data)),vmax=np.amax(hdu.data)+2*np.abs(np.amin(hdu.data))),matplotlib.colors.PowerNorm(gamma=2.)] 
     # diverging color maps...'handwave switches color'
     cmaps_d = ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
@@ -100,14 +100,16 @@ def ellipse(file,possible_hosts,sn_position,title='',save = False,show=False):
     cmaps_s = ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
             'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
             'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
-    ax.imshow(hdu.data,norm=norms[0],cmap=cmaps_d[5])
+    
+
+    ax.imshow(hdu.data,norm=norms[0],cmap=cmaps_s[0])
 
     ax.set_xlabel(r'$\alpha$')
     ax.set_ylabel(r'$\delta$')
     ax.set_title(title)
     
     sn_pix_coords = wcs.utils.skycoord_to_pixel(sn_position, w,origin=1,mode='all')
-    ax.scatter([int(sn_pix_coords[0])],[int(sn_pix_coords[1])],marker='X',c='white',edgecolor='white')
+    ax.scatter([int(sn_pix_coords[0])],[int(sn_pix_coords[1])],marker='X',c='black',edgecolor='white',label='SN')
     pix_coords = []
     
     # now into the possible hosts to get major,minor,position angle and plot ellipse at loc 
@@ -122,7 +124,12 @@ def ellipse(file,possible_hosts,sn_position,title='',save = False,show=False):
         gal_a = np.float(possible_hosts[i][1]) # pixel
         gal_b = np.float(possible_hosts[i][2]) # pixel
         gal_theta = np.float(possible_hosts[i][3]) # deg ccw/x
-        ax.add_patch(Ellipse((x,y),width = 5*gal_a, height = 5*gal_b, angle = gal_theta,color='black',facecolor=None,fill=False))
+        galid = np.float(possible_hosts[i][4])
+
+        colors = ['red','blue','green','cyan','violet','turquoise','purple','yellow','orange','lime','navy','pink','saddlebrown','silver','gold','navajowhite']
+        ax.add_patch(Ellipse((x,y),width = 5*gal_a, height = 5*gal_b, angle = gal_theta,color=colors[i],label=galid,facecolor=None,fill=False))
+
+    plt.legend(loc='upper right', bbox_to_anchor=(1.4, 1.0))
     if save == True:
         plt.savefig('nearby_host_ellipses/'+file[:8])
     if show == True:
