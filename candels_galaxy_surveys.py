@@ -46,7 +46,16 @@ class galaxy_survey(object):
 			self.sfr_2a_tau='SFR_2a_tau'
 			self.tau_2a_tau='tau_2a_tau'
 			# mass colnames
+			self.zphot = 'zphot'
+			self.dz_l68 = 'zphot_l68'
+			self.dz_u68 = 'zphot_u68'
+			self.dz_l95 = 'zphot_l95'
+			self.dz_u95 = 'zphot_u95'
+			self.zspec = 'zspec'
+			self.quality_zspec = 'q_zspec'
+			self.ref_zspec= 'r_zspec'
 			self.mass_2a_tau='M_2a_tau'
+
 		elif source == 'Stefanon2017; egs_candels; https://archive.stsci.edu/prepds/candels/':
 
 			self.ids = '  1 ID             '
@@ -73,6 +82,15 @@ class galaxy_survey(object):
 			self.tau_2a_tau='  3 tau_2a_tau        (Gyr) '
 			# mass cols
 			self.mass_2a_tau=' 28 M_2a_tau       (dex(solMass)) '
+			self.zphot ='  8 zphot          '
+			self.dz_l68 = ' 13 zphot_l68      '
+			self.dz_u68 = ' 14 zphot_u68      '
+			self.dz_l95 = ' 15 zphot_l95      '
+			self.dz_u95 = ' 16 zphot_u95      '
+			self.zspec = '  9 zspec          '
+			self.quality_zspec = ' 10 q_zspec        '
+			self.ref_zspec = ' 11 r_zspec        '
+
 		elif source == 'Nayyeri2017; cos_candels; https://archive.stsci.edu/prepds/candels/':
 
 			self.ids = 'ID '
@@ -99,6 +117,14 @@ class galaxy_survey(object):
 			self.tau_2a_tau='tau_2a_tau (Gyr) '
 			# mass table columns
 			self.mass_2a_tau = 'M_2_tau (dex(solMass)) '
+			self.zphot = 'zphot '
+			self.dz_l68 = 'zphot_l68 '
+			self.dz_u68 = 'zphot_u68 '
+			self.dz_l95 = 'zphot_l95 '
+			self.dz_u95 = 'zphot_u95 '
+			self.zspec = 'zspec '
+			self.quality_zspec = 'q_zspec '
+		
 		elif source == 'Santini2015; uds_candels; https://archive.stsci.edu/prepds/candels/':
 			
 			self.ids = 'Seq'
@@ -125,12 +151,21 @@ class galaxy_survey(object):
 			self.tau_2a_tau='tau_2a_tau'
 			# mass colnames
 			self.mass_2a_tau='M_2a_tau'
+			self.zphot = 'zphot'
+			self.dz_l68 = 'zphot_l68'
+			self.dz_u68 = 'zphot_u68'	
+			self.dz_l95 = 'zphot_l95'
+			self.dz_u95 = 'zphot_u95'
+			self.zspec = 'zspec'
+			self.quality_zspec = 'q_zspec'
+			self.ref_zspec = 'r_zspec'
+
 		elif source == 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php':
 			
 			self.ids = 'id'
 
 			# photom cols
-			self.redshift_names='z'
+			self.redshift_names='z' # zspec if avail otherwise zpeak
 			self.ra_names='ra'
 			self.ra_units=u.deg 
 			self.dec_names='dec'
@@ -144,6 +179,15 @@ class galaxy_survey(object):
 			self.ltau='ltau'
 			self.lsfr='lsfr'
 			self.lmass='lmass'
+			# physpar cols
+			self.dz_l68 = 'l68'
+			self.dz_u68 = 'u68'
+			self.dz_l95 = 'l95'
+			self.dz_u95 = 'u95'
+			self.quality_z = 'q_z' # quality parameter in photo-z! see brammer et al 2008. 
+			self.zphot = 'z_peak' # peak from EAZY photo z prob distribution code. 
+			self.zspec = 'z_spec'
+
 		else: print('whoa now, slow down, you didnt go into any of the sources')
 		
 	def __str__(self):

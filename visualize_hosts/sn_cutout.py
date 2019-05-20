@@ -68,7 +68,12 @@ def download_image_save_cutout(position, size, cutout_filename = 'example_cutout
     #cutout_filename = 'example_cutout.fits'
     hdu.writeto('cutouts/'+cutout_filename, overwrite=True)
 
-def ellipse(file,possible_hosts,sn_position,title='', save = False,show=False):
+def ellipse(file,possible_hosts,sn_position,title='', save = False,show=False,
+    logscale=True,
+    diverging=True,
+    color_idx = 0,
+    val_min = -0.015,
+    val_max=1.15):
     
     # access the file
     fits_image = fits.open('cutouts/'+file)
@@ -88,21 +93,29 @@ def ellipse(file,possible_hosts,sn_position,title='', save = False,show=False):
     # initialize the figure
     f= plt.figure()
     ax=f.gca(projection=w)
-    #ax.imshow(hdu.data,vmin=0,vmax=0.015)
-    # try with norm
-    #ax.imshow(hdu.data,norm=matplotlib.colors.Normalize(vmin=-.015,vmax=.015))
-    #print(np.amin(hdu.data ))
-    norms = [matplotlib.colors.LogNorm(vmin=np.abs(np.amin(hdu.data)),vmax=np.amax(hdu.data)+2*np.abs(np.amin(hdu.data))),matplotlib.colors.PowerNorm(gamma=2.)] 
-    # diverging color maps...'handwave switches color'
-    cmaps_d = ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
+    
+    # choosing how to normalize the image 
+    
+    # the image min,max values 
+    #img_min = np.abs(np.amin(hdu.data))
+    #img_max = np.amax(hdu.data)+2*np.abs(np.amin(hdu.data))
+    
+    if logscale == True: # is the default
+        norm_scale = matplotlib.colors.LogNorm(vmin=val_min,vmax=val_max)
+    else: # will go to linear normalization, may be better go to fits and zscale to determine good vmin,vmax 
+        norm_scale = matplotlib.colors.Normalize(vmin=val_min,vmax=val_max)
+    
+    # choosing which color map 
+    if diverging == True: # is the default
+        color_map = ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
             'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']
-    # sequential color maps...'handwave doesn't switch color'
-    cmaps_s = ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+    else: # will go to sequential here 
+        color_map =       ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
             'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
             'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
     
 
-    ax.imshow(hdu.data,norm=norms[0],cmap=cmaps_s[0])
+    ax.imshow(hdu.data,norm=norm_scale,cmap=color_map[color_idx])
 
     ax.set_xlabel(r'$\alpha$')
     ax.set_ylabel(r'$\delta$')
@@ -125,6 +138,13 @@ def ellipse(file,possible_hosts,sn_position,title='', save = False,show=False):
         gal_b = np.float(possible_hosts[i][2]) # pixel
         gal_theta = np.float(possible_hosts[i][3]) # deg ccw/x
         galid = np.float(possible_hosts[i][4])
+        galsource = possible_hosts[i][5]
+        
+        """
+        # very annoying goods-n strikes again?
+        if galsource == 'Skelton14; goods-n_3dhst; https://3dhst.research.yale.edu/Data.php':
+            gal_theta -= 90
+        """
 
         colors = ['red','blue','green','cyan','violet','turquoise','purple','yellow','orange','lime','navy','pink','saddlebrown','silver','gold','navajowhite']
         ax.add_patch(Ellipse((x,y),width = 5*gal_a, height = 5*gal_b, angle = gal_theta,color=colors[i],label=galid,facecolor=None,fill=False))
