@@ -202,7 +202,30 @@ class galaxy_survey(object):
 		
 		return locs
 
+	def spherical_offsets(self,loc):
+		locs = self.gal_skycoords()
+		offs = []
+		for i in range(len(photom)):
+			dra, ddec = loc.spherical_offsets_to(locs[i])
+			offs.append([dra,ddec])
+		return offs
 
+	def separations(self,loc):
+		locs = self.gal_skycoords()
+		seps = []
+		for i in range(len(photom)):
+			sep = locs[i].separation(loc)
+			seps.append(sep)
+		return seps
+
+	def position_angle(self,loc):
+		locs = self.gal_skycoords()
+		pas = []
+		for i in range(len(photom)):
+			pa = locs[i].position_angle(loc)
+			pas.append(pa)
+		return pas
+		
 	def nearest(self,loc,conversion = 3600.0/0.06):
 		# x,y in deg so 3600 '' / deg then f160w image has .06 ''/pixel, we need cancellation with cij in pixel^-2; returns R ~ units of A or B semi-axes the elliptical radii away
 		locs = self.gal_skycoords()
