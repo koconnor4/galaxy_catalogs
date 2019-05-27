@@ -205,7 +205,7 @@ class galaxy_survey(object):
 	def spherical_offsets(self,loc):
 		locs = self.gal_skycoords()
 		offs = []
-		for i in range(len(photom)):
+		for i in range(len(self.photom)):
 			dra, ddec = loc.spherical_offsets_to(locs[i])
 			offs.append([dra,ddec])
 		return offs
@@ -213,7 +213,7 @@ class galaxy_survey(object):
 	def separations(self,loc):
 		locs = self.gal_skycoords()
 		seps = []
-		for i in range(len(photom)):
+		for i in range(len(self.photom)):
 			sep = locs[i].separation(loc)
 			seps.append(sep)
 		return seps
@@ -221,7 +221,7 @@ class galaxy_survey(object):
 	def position_angle(self,loc):
 		locs = self.gal_skycoords()
 		pas = []
-		for i in range(len(photom)):
+		for i in range(len(self.photom)):
 			pa = locs[i].position_angle(loc)
 			pas.append(pa)
 		return pas
